@@ -26,12 +26,14 @@ public class CreditCardInformationValidatorTest {
 
   private MockedStatic<Clock> clockMock;
 
+  private static int MAR_1_2025_UNIX_TIMESTAMP = 1740787200;
+
   @BeforeEach
   void beforeEach(){
     Clock spyClock = spy(Clock.systemDefaultZone());
     clockMock = mockStatic(Clock.class);
     clockMock.when(Clock::systemDefaultZone).thenReturn(spyClock);
-    when(spyClock.instant()).thenReturn(Instant.ofEpochSecond(1740787200));
+    when(spyClock.instant()).thenReturn(Instant.ofEpochSecond(MAR_1_2025_UNIX_TIMESTAMP));
   }
 
   @AfterEach
@@ -59,7 +61,7 @@ public class CreditCardInformationValidatorTest {
   }
 
   @ParameterizedTest
-  @CsvSource(value = {"12/1212", "1/1984", "12/1999"}, delimiterString = "/")
+  @CsvSource(value = {"12/1212", "1/1984", "12/1999", "3/2025"}, delimiterString = "/")
   void expiryDatePassed(int expiryMonth, int expiryYear) {
     assertTrue(isCardExpired(expiryMonth, expiryYear));
   }
