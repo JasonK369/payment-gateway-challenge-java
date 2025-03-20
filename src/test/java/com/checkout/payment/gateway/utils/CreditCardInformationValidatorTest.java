@@ -68,4 +68,16 @@ public class CreditCardInformationValidatorTest {
     assertThrows(DateTimeException.class, () -> isCardExpired(expiryMonth, expiryYear));
   }
 
+  @ParameterizedTest
+  @CsvSource(value = {"247", "123", "012", "9999"})
+  void validCVV(String cvv){
+    assertTrue(isValidCvv(cvv));
+  }
+
+  @ParameterizedTest
+  @CsvSource(value = {"247123199", "1", "76", "6AB", "XX", "!!"})
+  void invalidCVV(String cvv){
+    assertFalse(isValidCvv(cvv));
+  }
+
 }
