@@ -5,14 +5,12 @@ import com.checkout.payment.gateway.exception.MissingPaymentInformationException
 import com.checkout.payment.gateway.exception.PaymentUnsuccessfulException;
 import com.checkout.payment.gateway.model.AuthoriseRequest;
 import com.checkout.payment.gateway.model.AuthoriseResponse;
-import com.checkout.payment.gateway.model.PostPaymentRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
