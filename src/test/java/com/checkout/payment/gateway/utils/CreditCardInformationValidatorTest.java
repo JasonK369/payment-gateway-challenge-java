@@ -2,6 +2,7 @@ package com.checkout.payment.gateway.utils;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.MockedStatic;
@@ -19,6 +20,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static utils.CreditCardInformationValidator.isCardExpired;
 import static utils.CreditCardInformationValidator.isValidCardNumber;
+import static utils.CreditCardInformationValidator.isValidCvv;
 
 public class CreditCardInformationValidatorTest {
 
@@ -75,9 +77,14 @@ public class CreditCardInformationValidatorTest {
   }
 
   @ParameterizedTest
-  @CsvSource(value = {"247123199", "1", "76", "6AB", "XX", "!!"})
+  @CsvSource(value = {"247123199", "1", "76", "6AB", "XX", "!!", "\"\""})
   void invalidCVV(String cvv){
     assertFalse(isValidCvv(cvv));
+  }
+
+  @Test
+  void nullCVV(){
+    assertFalse(isValidCvv(null));
   }
 
 }
