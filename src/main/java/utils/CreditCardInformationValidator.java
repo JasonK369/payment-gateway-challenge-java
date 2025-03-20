@@ -6,6 +6,8 @@ import java.util.Objects;
 
 public class CreditCardInformationValidator {
 
+  private static final String CVV_VALIDATION_REGEX = "^[0-9]{3,4}$";
+
   public static boolean isValidCardNumber(String cardNumber) {
     return cardNumber.length() >= 14 && cardNumber.length() <= 19;
   }
@@ -17,7 +19,7 @@ public class CreditCardInformationValidator {
   }
 
   public static boolean isValidCvv(String cvv){
-    return Objects.nonNull(cvv) && cvv.matches("^[0-9]{3,4}$");
+    return Objects.nonNull(cvv) && cvv.matches(CVV_VALIDATION_REGEX);
   }
 
 }
