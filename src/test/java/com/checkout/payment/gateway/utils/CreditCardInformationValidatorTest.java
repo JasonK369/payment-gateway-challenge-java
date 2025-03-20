@@ -55,13 +55,13 @@ public class CreditCardInformationValidatorTest {
   @ParameterizedTest
   @CsvSource(value = {"12/2025", "1/2345", "12/2525"}, delimiterString = "/")
   void expiryDateNotPassed(int expiryMonth, int expiryYear) {
-    assertTrue(isCardExpired(expiryMonth, expiryYear));
+    assertFalse(isCardExpired(expiryMonth, expiryYear));
   }
 
   @ParameterizedTest
   @CsvSource(value = {"12/1212", "1/1984", "12/1999"}, delimiterString = "/")
   void expiryDatePassed(int expiryMonth, int expiryYear) {
-    assertFalse(isCardExpired(expiryMonth, expiryYear));
+    assertTrue(isCardExpired(expiryMonth, expiryYear));
   }
 
   @ParameterizedTest

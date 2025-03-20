@@ -15,7 +15,7 @@ public class CreditCardInformationValidator {
   public static boolean isCardExpired(int expiryMonth, int expiryYear){
     LocalDate now = LocalDate.now().withDayOfMonth(1);
     LocalDate cardExpiry = LocalDate.of(expiryYear, Month.of(expiryMonth), 1);
-    return cardExpiry.isAfter(now);
+    return cardExpiry.isBefore(now);
   }
 
   public static boolean isValidCvv(String cvv){
