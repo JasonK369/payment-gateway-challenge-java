@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatusCode;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -111,8 +112,7 @@ public class PaymentHandlingServiceTest {
   @Test
   void bankUnavailable(){
     when(mockRestTemplate.postForEntity(anyString(), any(), any())).thenThrow(
-        new HttpClientErrorException(
-            HttpStatusCode.valueOf(503)));
+        new HttpServerErrorException(HttpStatusCode.valueOf(503)));
 
     assertThrows(BankServerUnavailableException.class,  () -> paymentHandlingService.authorisePayment(new AuthoriseRequest(
         "cardNumber",
