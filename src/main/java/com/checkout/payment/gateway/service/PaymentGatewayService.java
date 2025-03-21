@@ -26,9 +26,6 @@ public class PaymentGatewayService {
   @Autowired
   private PaymentsRepository paymentsRepository;
 
-//  public PaymentGatewayService(PaymentsRepository paymentsRepository) {
-//    this.paymentsRepository = paymentsRepository;
-//  }
 
   public PostPaymentResponse getPaymentById(UUID id) {
     log.debug("Requesting access to to payment with ID {}", id);
@@ -79,7 +76,6 @@ public class PaymentGatewayService {
     checkCardExpired(postPaymentRequest.getExpiryMonth(), postPaymentRequest.getExpiryYear());
 
     checkCurrency(postPaymentRequest.getCurrency());
-
   }
 
   private void checkCardExpired(int expiryMonth, int expiryYear) {
