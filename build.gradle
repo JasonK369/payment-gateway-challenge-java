@@ -25,10 +25,10 @@ dependencies {
 
   testImplementation 'org.springframework.boot:spring-boot-starter-test'
   // https://mvnrepository.com/artifact/org.wiremock/wiremock
-  testImplementation group: 'org.wiremock', name: 'wiremock', version: '3.12.1'
+  testImplementation group: 'org.wiremock', name: 'wiremock', version: '3.10.0'
+
   testCompileOnly 'org.projectlombok:lombok:1.18.36'
   testAnnotationProcessor 'org.projectlombok:lombok:1.18.36'
-
 }
 
 tasks.named('test') {
