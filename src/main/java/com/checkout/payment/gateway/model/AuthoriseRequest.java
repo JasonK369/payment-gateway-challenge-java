@@ -11,6 +11,7 @@ import lombok.ToString;
 @Data
 @AllArgsConstructor
 public class AuthoriseRequest {
+  @JsonProperty("card_number")
   private String cardNumber;
 
   @JsonProperty("expiry_date")
