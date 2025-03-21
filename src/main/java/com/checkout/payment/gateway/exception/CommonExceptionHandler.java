@@ -1,5 +1,6 @@
 package com.checkout.payment.gateway.exception;
 
+import com.checkout.payment.gateway.enums.PaymentStatus;
 import com.checkout.payment.gateway.model.ErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,17 +18,11 @@ public class CommonExceptionHandler {
 
   private static final Logger LOG = LoggerFactory.getLogger(CommonExceptionHandler.class);
 
-  @ExceptionHandler(EventProcessingException.class)
-  public ResponseEntity<ErrorResponse> handleException(EventProcessingException ex) {
-    LOG.error("Exception happened", ex);
-    return new ResponseEntity<>(new ErrorResponse("Page not found"),
-        HttpStatus.NOT_FOUND);
-  }
-
   @ExceptionHandler(BankServerUnavailableException.class)
   public ResponseEntity<ErrorResponse> handleBankServerUnavailable(
-      BankServerUnavailableException bankServerUnavailableException){
-    return new ResponseEntity<>(new ErrorResponse(bankServerUnavailableException.getMessage()),
+      BankServerUnavailableException bankServerUnavailableException) {
+    return new ResponseEntity<>(
+        new ErrorResponse(bankServerUnavailableException.getMessage(), PaymentStatus.REJECTED),
         HttpStatus.BAD_GATEWAY);
   }
 
@@ -44,7 +39,13 @@ public class CommonExceptionHandler {
 
   @ExceptionHandler(PaymentNotFoundException.class)
   public ResponseEntity<ErrorResponse> handlePaymentNotFoundException(PaymentNotFoundException paymentNotFoundException){
-    return new ResponseEntity<>(new ErrorResponse(paymentNotFoundException.getMessage()),
+    return new ResponseEntity<>(new ErrorResponse(paymentNotFoundException.getMessage(), null),
         HttpStatus.NOT_FOUND);
+  }
+
+  @ExceptionHandler(PaymentUnsuccessfulException.class)
+  public ResponseEntity<ErrorResponse> handlePaymentUnsuccessfulException(PaymentUnsuccessfulException paymentUnsuccessfulException){
+    return new ResponseEntity<>(new ErrorResponse(paymentUnsuccessfulException.getMessage(), PaymentStatus.REJECTED),
+        HttpStatus.BAD_REQUEST);
   }
 }
