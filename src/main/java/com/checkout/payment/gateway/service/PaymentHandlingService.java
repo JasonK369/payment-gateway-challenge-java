@@ -44,7 +44,12 @@ public class PaymentHandlingService {
 
       throw new PaymentUnsuccessfulException(errorResponse);
     } catch (HttpServerErrorException httpServerErrorException) {
+      log.error("Exception on http service: {}", httpServerErrorException);
+
       throw new BankServerUnavailableException("Bank unavailable, no payment made");
+    } catch (Exception exception) {
+      log.error("Exception when calling bank api: {}", exception);
+      throw new PaymentUnsuccessfulException(exception.getMessage());
     }
   }
 
