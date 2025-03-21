@@ -41,4 +41,10 @@ public class CommonExceptionHandler {
     });
     return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
   }
+
+  @ExceptionHandler(PaymentNotFoundException.class)
+  public ResponseEntity<ErrorResponse> handlePaymentNotFoundException(PaymentNotFoundException paymentNotFoundException){
+    return new ResponseEntity<>(new ErrorResponse(paymentNotFoundException.getMessage()),
+        HttpStatus.NOT_FOUND);
+  }
 }
