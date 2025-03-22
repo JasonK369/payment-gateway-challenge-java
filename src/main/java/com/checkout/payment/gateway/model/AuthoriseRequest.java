@@ -3,14 +3,11 @@ package com.checkout.payment.gateway.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
 @Data
 @AllArgsConstructor
 public class AuthoriseRequest {
+
   @JsonProperty("card_number")
   private String cardNumber;
 
@@ -22,4 +19,23 @@ public class AuthoriseRequest {
   private int amount;
 
   private String cvv;
+
+  @Override
+  public String toString() {
+    return """
+        {
+          cardNumber: %s,
+          expiryDate: %s,
+          currency: %s,
+          int: %d,
+          cvv: %s
+        }
+        """.formatted(
+        "*".repeat(cardNumber.length() - 4) + cardNumber.substring(cardNumber.length() - 4),
+        expiryDate,
+        currency,
+        amount,
+        cvv
+    );
+  }
 }
