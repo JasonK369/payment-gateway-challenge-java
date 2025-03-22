@@ -177,7 +177,7 @@ class PaymentGatewayControllerTest {
     mvc.perform(MockMvcRequestBuilders.post(PAYMENT_END_POINT).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(
             postPaymentRequest)))
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.cardNumber").value(CARD_NUMBER_CANNOT_BE_NULL));
+        .andExpect(jsonPath("$.message").value(CARD_NUMBER_CANNOT_BE_NULL));
   }
 
   @ParameterizedTest
@@ -188,7 +188,7 @@ class PaymentGatewayControllerTest {
     mvc.perform(MockMvcRequestBuilders.post(PAYMENT_END_POINT).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(
             postPaymentRequest)))
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.cardNumber").value(INVALID_CARD_NUMBER_MESSAGE));
+        .andExpect(jsonPath("$.message").value(INVALID_CARD_NUMBER_MESSAGE));
   }
 
   @Test
@@ -198,7 +198,7 @@ class PaymentGatewayControllerTest {
     mvc.perform(MockMvcRequestBuilders.post(PAYMENT_END_POINT).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(
             postPaymentRequest)))
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.expiryMonth").value(EXPIRY_MONTH_CANNOT_BE_NULL));
+        .andExpect(jsonPath("$.message").value(EXPIRY_MONTH_CANNOT_BE_NULL));
   }
 
   @ParameterizedTest
@@ -209,7 +209,7 @@ class PaymentGatewayControllerTest {
     mvc.perform(MockMvcRequestBuilders.post(PAYMENT_END_POINT).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(
             postPaymentRequest)))
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.expiryMonth").value(EXPIRY_MONTH_OUT_OF_RANGE_MESSAGE));
+        .andExpect(jsonPath("$.message").value(EXPIRY_MONTH_OUT_OF_RANGE_MESSAGE));
   }
 
   @Test
@@ -219,7 +219,7 @@ class PaymentGatewayControllerTest {
     mvc.perform(MockMvcRequestBuilders.post(PAYMENT_END_POINT).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(
             postPaymentRequest)))
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.expiryYear").value(EXPIRY_YEAR_CANNOT_BE_NULL));
+        .andExpect(jsonPath("$.message").value(EXPIRY_YEAR_CANNOT_BE_NULL));
   }
 
   @Test
@@ -229,7 +229,7 @@ class PaymentGatewayControllerTest {
     mvc.perform(MockMvcRequestBuilders.post(PAYMENT_END_POINT).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(
             postPaymentRequest)))
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.currency").value(CURRENCY_CANNOT_BE_NULL));
+        .andExpect(jsonPath("$.message").value(CURRENCY_CANNOT_BE_NULL));
   }
 
   @ParameterizedTest
@@ -240,7 +240,7 @@ class PaymentGatewayControllerTest {
     mvc.perform(MockMvcRequestBuilders.post(PAYMENT_END_POINT).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(
             postPaymentRequest)))
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.currency").value(CURRENCY_OUT_OF_RANGE_MESSAGE));
+        .andExpect(jsonPath("$.message").value(CURRENCY_OUT_OF_RANGE_MESSAGE));
   }
 
   @Test
@@ -250,7 +250,7 @@ class PaymentGatewayControllerTest {
     mvc.perform(MockMvcRequestBuilders.post(PAYMENT_END_POINT).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(
             postPaymentRequest)))
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.amount").value(AMOUNT_CANNOT_BE_NULL));
+        .andExpect(jsonPath("$.message").value(AMOUNT_CANNOT_BE_NULL));
   }
 
   @Test
@@ -260,7 +260,7 @@ class PaymentGatewayControllerTest {
     mvc.perform(MockMvcRequestBuilders.post(PAYMENT_END_POINT).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(
             postPaymentRequest)))
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.amount").value(AMOUNT_MUST_BE_POSITIVE_MESSAGE));
+        .andExpect(jsonPath("$.message").value(AMOUNT_MUST_BE_POSITIVE_MESSAGE));
   }
 
   @Test
@@ -270,7 +270,7 @@ class PaymentGatewayControllerTest {
     mvc.perform(MockMvcRequestBuilders.post(PAYMENT_END_POINT).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(
             postPaymentRequest)))
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.cvv").value(CVV_CANNOT_BE_NULL));
+        .andExpect(jsonPath("$.message").value(CVV_CANNOT_BE_NULL));
   }
 
   @ParameterizedTest
@@ -295,7 +295,7 @@ class PaymentGatewayControllerTest {
     mvc.perform(MockMvcRequestBuilders.post(PAYMENT_END_POINT).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(
             postPaymentRequest)))
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.cvv").value(INVALID_CVV_MESSAGE));
+        .andExpect(jsonPath("$.message").value(INVALID_CVV_MESSAGE));
   }
 
   @Test
