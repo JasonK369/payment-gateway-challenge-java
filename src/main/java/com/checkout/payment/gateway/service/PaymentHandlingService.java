@@ -29,22 +29,26 @@ public class PaymentHandlingService {
   String paymentEndpoint;
 
   public AuthoriseResponse authorisePayment(AuthoriseRequest authoriseRequest) {
-    log.info("Incoming request = {}", authoriseRequest);
-
     try {
-      return restTemplate.postForEntity(baseUrl + paymentEndpoint, authoriseRequest,
+      log.info("Sending request to bank api, request={}", authoriseRequest);
+      AuthoriseResponse authoriseResponse = restTemplate.postForEntity(baseUrl + paymentEndpoint, authoriseRequest,
           AuthoriseResponse.class).getBody();
+
+      log.info("bank api response = {}", authoriseResponse);
+
+      return authoriseResponse;
     } catch (HttpClientErrorException httpClientErrorException) {
       HttpStatusCode httpStatusCode = httpClientErrorException.getStatusCode();
       String errorResponse = httpClientErrorException.getResponseBodyAsString();
 
       if (httpStatusCode.value() == HttpStatus.BAD_REQUEST.value()) {
+        log.error("Missing required information when sending request to bank api");
         throw new MissingPaymentInformationException(errorResponse);
       }
 
       throw new PaymentUnsuccessfulException(errorResponse);
     } catch (HttpServerErrorException httpServerErrorException) {
-      log.error("Exception on http service: {}", httpServerErrorException);
+      log.error("Exception on bank http server: {}", httpServerErrorException);
 
       throw new BankServerUnavailableException("Bank unavailable, no payment made");
     } catch (Exception exception) {

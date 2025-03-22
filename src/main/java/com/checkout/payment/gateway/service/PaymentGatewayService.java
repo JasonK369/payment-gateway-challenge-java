@@ -33,14 +33,11 @@ public class PaymentGatewayService {
   }
 
   public PostPaymentResponse processPayment(PostPaymentRequest postPaymentRequest) {
-    // validation
     validationPaymentInformation(postPaymentRequest);
 
-    // payment
     AuthoriseResponse authoriseResponse = paymentHandlingService.authorisePayment(
         mapAuthoriseRequest(postPaymentRequest));
 
-    // save to db
     PostPaymentResponse postPaymentResponse = mapPostPaymentResponse(postPaymentRequest,
         authoriseResponse);
     paymentsRepository.add(postPaymentResponse);
@@ -80,6 +77,7 @@ public class PaymentGatewayService {
 
   private void checkCardExpired(int expiryMonth, int expiryYear) {
     if (isCardExpired(expiryMonth, expiryYear)) {
+      log.error("Card expired, expiry month = {}, expiry year = {}", expiryMonth, expiryYear);
       throw new InvalidInformationException("Card expired");
     }
   }
@@ -88,6 +86,7 @@ public class PaymentGatewayService {
     try {
       Currency.getInstance(currency);
     } catch (IllegalArgumentException illegalArgumentException) {
+      log.error("currency [{}] not exist", currency);
       throw new InvalidInformationException("Invalid currency");
     }
   }
