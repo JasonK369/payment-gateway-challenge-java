@@ -232,6 +232,18 @@ class PaymentGatewayControllerTest {
         .andExpect(jsonPath("$.message").value(EXPIRY_YEAR_CANNOT_BE_NULL));
   }
 
+  @ParameterizedTest
+  @CsvSource(value = {"12/1996", "3/2025", "01/2023"}, delimiterString = "/")
+  void cardExpired(int expiryMonth, int expiryYear) throws Exception{
+    postPaymentRequest.setExpiryMonth(expiryMonth);
+    postPaymentRequest.setExpiryYear(expiryYear);
+
+    mvc.perform(MockMvcRequestBuilders.post(PAYMENT_END_POINT).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(
+            postPaymentRequest)))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.message").value("Card expired"));
+  }
+
   @Test
   void currencyIsNull() throws Exception{
     postPaymentRequest.setCurrency(null);
@@ -251,6 +263,17 @@ class PaymentGatewayControllerTest {
             postPaymentRequest)))
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.message").value(CURRENCY_OUT_OF_RANGE_MESSAGE));
+  }
+
+  @ParameterizedTest
+  @CsvSource({"AAA", "BBB", "CCC"})
+  void invalidCurrency(String currency) throws Exception{
+    postPaymentRequest.setCurrency(currency);
+
+    mvc.perform(MockMvcRequestBuilders.post(PAYMENT_END_POINT).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(
+            postPaymentRequest)))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.message").value("Invalid currency"));
   }
 
   @Test

@@ -54,4 +54,9 @@ public class CommonExceptionHandler {
     String errorMessage = String.format("Value [%s] is not accepted, please check your input", methodArgumentTypeMismatchException.getValue());
     return new ResponseEntity<>(new ErrorResponse(errorMessage, null), HttpStatus.BAD_REQUEST);
   }
+
+  @ExceptionHandler(InvalidInformationException.class)
+  public ResponseEntity<ErrorResponse> handleInvalidInformationException(InvalidInformationException invalidInformationException){
+    return new ResponseEntity<>(new ErrorResponse(invalidInformationException.getMessage(), PaymentStatus.REJECTED), HttpStatus.BAD_REQUEST);
+  }
 }
