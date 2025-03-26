@@ -22,6 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.checkout.payment.gateway.enums.PaymentStatus;
 import com.checkout.payment.gateway.model.PaymentDetail;
 import com.checkout.payment.gateway.model.PostPaymentRequest;
+import com.checkout.payment.gateway.model.PostPaymentResponse;
 import com.checkout.payment.gateway.repository.PaymentsRepository;
 import java.util.UUID;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -158,6 +159,54 @@ class PaymentGatewayControllerTest {
         .andExpect(jsonPath("$.expiryYear").value(EXPIRE_YEAR))
         .andExpect(jsonPath("$.currency").value(CURRENCY))
         .andExpect(jsonPath("$.amount").value(AMOUNT));
+
+    Thread.sleep(2000);
+  }
+
+  @Test
+  void whenPaymentAuthorisedAndQueryWithId() throws Exception {
+    mockBankAuthorised();
+
+    String postPaymentResponseString = mvc.perform(
+        MockMvcRequestBuilders.post(PAYMENT_END_POINT)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(postPaymentRequest)
+            )).andReturn().getResponse().getContentAsString();
+
+    PostPaymentResponse postPaymentResponse = objectMapper.readValue(postPaymentResponseString,
+        PostPaymentResponse.class);
+
+    mvc.perform(MockMvcRequestBuilders.get(PAYMENT_END_POINT + "/" + postPaymentResponse.getId()))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.status").value(postPaymentResponse.getStatus().getName()))
+        .andExpect(
+            jsonPath("$.cardNumberLastFour").value(postPaymentResponse.getCardNumberLastFour()))
+        .andExpect(jsonPath("$.expiryMonth").value(postPaymentResponse.getExpiryMonth()))
+        .andExpect(jsonPath("$.expiryYear").value(postPaymentResponse.getExpiryYear()))
+        .andExpect(jsonPath("$.currency").value(postPaymentResponse.getCurrency()))
+        .andExpect(jsonPath("$.amount").value(postPaymentResponse.getAmount()));
+
+    Thread.sleep(2000);
+  }
+
+  @Test
+  void whenPaymentContainsInvalidAmount() throws Exception{
+
+    String requsetString = """
+        {
+          "currency": "GBP",
+          "amount": 12.3,
+          "cvv": "306",
+          "card_number": "9123912391239123",
+          "expiry_month": 1,
+          "expiry_year": 2034
+        }
+        """;
+
+    mvc.perform(MockMvcRequestBuilders.post(PAYMENT_END_POINT).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(
+            requsetString)))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.message").value("Payload malformat found, please check documentation and change payload"));
 
     Thread.sleep(2000);
   }
@@ -340,6 +389,8 @@ class PaymentGatewayControllerTest {
         .andExpect(status().isBadGateway())
         .andExpect(jsonPath("$.message").value("Bank unavailable, no payment made"));
   }
+
+
 
   private void mockBankAuthorised(){
     willBankAuthorisePayment(true);
