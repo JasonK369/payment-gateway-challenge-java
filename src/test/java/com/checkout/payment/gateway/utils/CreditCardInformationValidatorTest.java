@@ -26,7 +26,7 @@ public class CreditCardInformationValidatorTest {
 
   private MockedStatic<Clock> clockMock;
 
-  private static int MAR_1_2025_UNIX_TIMESTAMP = 1740787200;
+  private final static int MAR_1_2025_UNIX_TIMESTAMP = 1740787200;
 
   @BeforeEach
   void beforeEach(){
