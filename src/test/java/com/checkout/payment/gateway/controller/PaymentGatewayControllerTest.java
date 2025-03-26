@@ -20,8 +20,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.checkout.payment.gateway.enums.PaymentStatus;
+import com.checkout.payment.gateway.model.PaymentDetail;
 import com.checkout.payment.gateway.model.PostPaymentRequest;
-import com.checkout.payment.gateway.model.PostPaymentResponse;
 import com.checkout.payment.gateway.repository.PaymentsRepository;
 import java.util.UUID;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -105,25 +105,26 @@ class PaymentGatewayControllerTest {
 
   @Test
   void whenPaymentWithIdExistThenCorrectPaymentIsReturned() throws Exception {
-    PostPaymentResponse payment = new PostPaymentResponse();
-    payment.setId(UUID.randomUUID());
-    payment.setAmount(10);
-    payment.setCurrency("USD");
-    payment.setStatus(PaymentStatus.AUTHORIZED);
-    payment.setExpiryMonth(12);
-    payment.setExpiryYear(2024);
-    payment.setCardNumberLastFour("4321");
+    PaymentDetail paymentDetail = new PaymentDetail(
+        UUID.randomUUID(),
+        PaymentStatus.AUTHORIZED,
+        CARD_NUMBER,
+        EXPIRE_MONTH,
+        EXPIRE_YEAR,
+        CURRENCY,
+        AMOUNT
+    );
 
-    paymentsRepository.add(payment);
+    paymentsRepository.add(paymentDetail);
 
-    mvc.perform(MockMvcRequestBuilders.get(PAYMENT_END_POINT+ "/" + payment.getId()))
+    mvc.perform(MockMvcRequestBuilders.get(PAYMENT_END_POINT+ "/" + paymentDetail.getId()))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.status").value(payment.getStatus().getName()))
-        .andExpect(jsonPath("$.cardNumberLastFour").value(payment.getCardNumberLastFour()))
-        .andExpect(jsonPath("$.expiryMonth").value(payment.getExpiryMonth()))
-        .andExpect(jsonPath("$.expiryYear").value(payment.getExpiryYear()))
-        .andExpect(jsonPath("$.currency").value(payment.getCurrency()))
-        .andExpect(jsonPath("$.amount").value(payment.getAmount()));
+        .andExpect(jsonPath("$.status").value(paymentDetail.getStatus().getName()))
+        .andExpect(jsonPath("$.cardNumberLastFour").value(paymentDetail.getCardNumber().substring(paymentDetail.getCardNumber().length() - 4)))
+        .andExpect(jsonPath("$.expiryMonth").value(paymentDetail.getExpiryMonth()))
+        .andExpect(jsonPath("$.expiryYear").value(paymentDetail.getExpiryYear()))
+        .andExpect(jsonPath("$.currency").value(paymentDetail.getCurrency()))
+        .andExpect(jsonPath("$.amount").value(paymentDetail.getAmount()));
   }
 
   @Test
