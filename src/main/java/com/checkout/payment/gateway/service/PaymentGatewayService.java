@@ -5,6 +5,8 @@ import com.checkout.payment.gateway.exception.InvalidInformationException;
 import com.checkout.payment.gateway.exception.PaymentNotFoundException;
 import com.checkout.payment.gateway.model.AuthoriseRequest;
 import com.checkout.payment.gateway.model.AuthoriseResponse;
+import com.checkout.payment.gateway.model.GetPaymentResponse;
+import com.checkout.payment.gateway.model.PaymentDetail;
 import com.checkout.payment.gateway.model.PostPaymentRequest;
 import com.checkout.payment.gateway.model.PostPaymentResponse;
 import com.checkout.payment.gateway.repository.PaymentsRepository;
@@ -26,10 +28,15 @@ public class PaymentGatewayService {
   @Autowired
   private PaymentsRepository paymentsRepository;
 
+  public final int CREDIT_CARD_MASKING_LENGTH = 4;
 
-  public PostPaymentResponse getPaymentById(UUID id) {
-    log.debug("Requesting access to to payment with ID {}", id);
-    return paymentsRepository.get(id).orElseThrow(() -> new PaymentNotFoundException(id));
+
+  public GetPaymentResponse getPaymentById(UUID id) {
+    log.info("Requesting access to to payment with ID {}", id);
+    PaymentDetail paymentDetail = paymentsRepository.get(id).orElseThrow(() -> new PaymentNotFoundException(id));
+
+
+    return mapGetPaymentResponseFrom(paymentDetail);
   }
 
   public PostPaymentResponse processPayment(PostPaymentRequest postPaymentRequest) {
@@ -38,11 +45,23 @@ public class PaymentGatewayService {
     AuthoriseResponse authoriseResponse = paymentHandlingService.authorisePayment(
         mapAuthoriseRequest(postPaymentRequest));
 
-    PostPaymentResponse postPaymentResponse = mapPostPaymentResponse(postPaymentRequest,
-        authoriseResponse);
-    paymentsRepository.add(postPaymentResponse);
+    PaymentDetail paymentDetail = mapPaymentDetail(postPaymentRequest, authoriseResponse);
+    paymentsRepository.add(paymentDetail);
 
-    return postPaymentResponse;
+    return mapPostPaymentResponse(paymentDetail);
+  }
+
+  private PaymentDetail mapPaymentDetail(PostPaymentRequest postPaymentRequest,
+      AuthoriseResponse authoriseResponse) {
+    return new PaymentDetail(
+        UUID.randomUUID(),
+        authoriseResponse.getAuthorized() ? PaymentStatus.AUTHORIZED : PaymentStatus.DECLINED,
+        postPaymentRequest.getCardNumber(),
+        postPaymentRequest.getExpiryMonth(),
+        postPaymentRequest.getExpiryYear(),
+        postPaymentRequest.getCurrency(),
+        postPaymentRequest.getAmount()
+    );
   }
 
   private AuthoriseRequest mapAuthoriseRequest(PostPaymentRequest postPaymentRequest) {
@@ -56,16 +75,27 @@ public class PaymentGatewayService {
     );
   }
 
-  private PostPaymentResponse mapPostPaymentResponse(PostPaymentRequest postPaymentRequest,
-      AuthoriseResponse authoriseResponse) {
+  private PostPaymentResponse mapPostPaymentResponse(PaymentDetail paymentDetail) {
     return new PostPaymentResponse(
         UUID.randomUUID(),
-        authoriseResponse.getAuthorized() ? PaymentStatus.AUTHORIZED : PaymentStatus.DECLINED,
-        trimCreditCardNumber(postPaymentRequest.getCardNumber(), 4),
-        postPaymentRequest.getExpiryMonth(),
-        postPaymentRequest.getExpiryYear(),
-        postPaymentRequest.getCurrency(),
-        postPaymentRequest.getAmount()
+        paymentDetail.getStatus(),
+        trimCreditCardNumber(paymentDetail.getCardNumber(), CREDIT_CARD_MASKING_LENGTH),
+        paymentDetail.getExpiryMonth(),
+        paymentDetail.getExpiryYear(),
+        paymentDetail.getCurrency(),
+        paymentDetail.getAmount()
+    );
+  }
+
+  private GetPaymentResponse mapGetPaymentResponseFrom(PaymentDetail paymentDetail){
+    return new GetPaymentResponse(
+        paymentDetail.getId(),
+        paymentDetail.getStatus(),
+        trimCreditCardNumber(paymentDetail.getCardNumber(), CREDIT_CARD_MASKING_LENGTH),
+        paymentDetail.getExpiryMonth(),
+        paymentDetail.getExpiryYear(),
+        paymentDetail.getCurrency(),
+        paymentDetail.getAmount()
     );
   }
 

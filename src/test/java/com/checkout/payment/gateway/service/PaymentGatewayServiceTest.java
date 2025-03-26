@@ -4,10 +4,11 @@ import com.checkout.payment.gateway.enums.PaymentStatus;
 import com.checkout.payment.gateway.exception.InvalidInformationException;
 import com.checkout.payment.gateway.exception.PaymentNotFoundException;
 import com.checkout.payment.gateway.model.AuthoriseResponse;
+import com.checkout.payment.gateway.model.GetPaymentResponse;
+import com.checkout.payment.gateway.model.PaymentDetail;
 import com.checkout.payment.gateway.model.PostPaymentRequest;
 import com.checkout.payment.gateway.model.PostPaymentResponse;
 import com.checkout.payment.gateway.repository.PaymentsRepository;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -116,18 +117,11 @@ public class PaymentGatewayServiceTest {
     clockMock.close();
   }
 
-  private void mockClock() {
-    Clock spyClock = spy(Clock.systemDefaultZone());
-    clockMock = mockStatic(Clock.class);
-    clockMock.when(Clock::systemDefaultZone).thenReturn(spyClock);
-    when(spyClock.instant()).thenReturn(Instant.ofEpochSecond(MAR_1_2025_UNIX_TIMESTAMP));
-  }
-
   @Test
   void successfullyGetPayment() {
     UUID uuid = UUID.randomUUID();
 
-    when(mockPaymentsRepository.get(any())).thenReturn(Optional.of(new PostPaymentResponse(
+    when(mockPaymentsRepository.get(any())).thenReturn(Optional.of(new PaymentDetail(
         uuid,
         PaymentStatus.AUTHORIZED,
         CARD_NUMBER.substring(CARD_NUMBER.length() - NUMBER_OF_DIGIT_TO_SHOW),
@@ -137,7 +131,7 @@ public class PaymentGatewayServiceTest {
         AMOUNT
     )));
 
-    PostPaymentResponse dataFromStore = paymentGatewayService.getPaymentById(UUID.randomUUID());
+    GetPaymentResponse dataFromStore = paymentGatewayService.getPaymentById(UUID.randomUUID());
 
     assertEquals(uuid, dataFromStore.getId());
     assertEquals(PaymentStatus.AUTHORIZED, dataFromStore.getStatus());
@@ -174,6 +168,15 @@ public class PaymentGatewayServiceTest {
     assertEquals(EXPIRE_YEAR, postPaymentResponse.getExpiryYear());
     assertEquals(CURRENCY, postPaymentResponse.getCurrency());
     assertEquals(AMOUNT, postPaymentResponse.getAmount());
+  }
+
+  private void mockClock() {
+    Clock spyClock = spy(Clock.systemDefaultZone());
+    when(spyClock.instant()).thenReturn(Instant.ofEpochSecond(MAR_1_2025_UNIX_TIMESTAMP));
+
+    clockMock = mockStatic(Clock.class);
+    clockMock.when(Clock::systemDefaultZone).thenReturn(spyClock);
+    clockMock.when(Clock::systemUTC).thenReturn(spyClock);
   }
 
 }
