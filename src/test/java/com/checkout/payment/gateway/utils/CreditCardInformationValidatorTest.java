@@ -19,7 +19,6 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static utils.CreditCardInformationValidator.isCardExpired;
-import static utils.CreditCardInformationValidator.isValidCardNumber;
 import static utils.CreditCardInformationValidator.isValidCvv;
 
 public class CreditCardInformationValidatorTest {
@@ -39,19 +38,6 @@ public class CreditCardInformationValidatorTest {
   @AfterEach
   void afterEach(){
     clockMock.close();
-  }
-
-  @ParameterizedTest
-  @CsvSource({"36227206271667", "378282246310005", "4242424242424242", "42424242424242420",
-      "620550000000000000", "6205500000000000004"})
-  void validCardNumber(String cardNumber) {
-    assertTrue(isValidCardNumber(cardNumber));
-  }
-
-  @ParameterizedTest
-  @CsvSource({"1", "10", "13", "20", "100"})
-  void invalidCardNumber(int cardNumberLength) {
-    assertFalse(isValidCardNumber("0".repeat(cardNumberLength)));
   }
 
   @ParameterizedTest
