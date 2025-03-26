@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -58,5 +59,12 @@ public class CommonExceptionHandler {
   @ExceptionHandler(InvalidInformationException.class)
   public ResponseEntity<ErrorResponse> handleInvalidInformationException(InvalidInformationException invalidInformationException){
     return new ResponseEntity<>(new ErrorResponse(invalidInformationException.getMessage(), PaymentStatus.REJECTED), HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException httpMessageNotReadableException){
+    log.error("Payload malformat", httpMessageNotReadableException);
+
+    return new ResponseEntity<>(new ErrorResponse("Payload malformat found, please check documentation and change payload", PaymentStatus.REJECTED), HttpStatus.BAD_REQUEST);
   }
 }
