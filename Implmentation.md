@@ -28,6 +28,8 @@ Also, it is better to have the reason / support message for different status, es
 
 And in most of the time, payment gateway (i.e.: this system) should not retry any critical API call for the user, they should retry by themselves
 
+On the other hand, I've creating distinct, granular exception classes allows for more precise error handling. This can allow us to have targeted error handling (eg: create different catch block for different types of exceptions) 
+
 ### Using annotation
 In Spring and Java family has variety of annotation (I believe other language / framework also have them)
 
