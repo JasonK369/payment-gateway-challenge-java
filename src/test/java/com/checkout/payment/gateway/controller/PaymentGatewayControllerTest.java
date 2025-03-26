@@ -135,6 +135,15 @@ class PaymentGatewayControllerTest {
         .andExpect(jsonPath("$.message").value(String.format("Payment not found, id = %s",uuid)));
   }
 
+  @ParameterizedTest
+  @CsvSource({"1", "abcefg", "a", "Hello!World!!~`+"})
+  void whenPaymentIdIsNotUUID(String invalidId) throws Exception {
+    mvc.perform(MockMvcRequestBuilders.get(PAYMENT_END_POINT + "/" + invalidId))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.message").value(
+            String.format("Value [%s] is not accepted, please check your input", invalidId)));
+  }
+
   @Test
   void whenPaymentAuthorised() throws Exception{
     mockBankAuthorised();
