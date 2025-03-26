@@ -1,6 +1,8 @@
 package com.checkout.payment.gateway.model;
 
+import com.checkout.payment.gateway.exception.InvalidInformationException;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
@@ -9,12 +11,16 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Pattern.Flag;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class PostPaymentRequest implements Serializable {
   public static final String INVALID_CARD_NUMBER_MESSAGE = "card number between 14-19 characters long";
   public static final String EXPIRY_MONTH_OUT_OF_RANGE_MESSAGE = "Value must be between 1-12";
@@ -56,10 +62,6 @@ public class PostPaymentRequest implements Serializable {
   @NotEmpty(message = CVV_CANNOT_BE_NULL)
   @Pattern(regexp = CVV_REGEX,flags = { Flag.CASE_INSENSITIVE}, message = INVALID_CVV_MESSAGE)
   private String cvv;
-
-  public String getExpiryDate() {
-    return String.format("%02d/%d", expiryMonth, expiryYear);
-  }
 
   @Override
   public String toString() {
