@@ -68,7 +68,7 @@ public class PaymentGatewayService {
 
     return new AuthoriseRequest(
         postPaymentRequest.getCardNumber(),
-        postPaymentRequest.getExpiryDate(),
+        String.format("%02d/%d", postPaymentRequest.getExpiryMonth(), postPaymentRequest.getExpiryYear()),
         postPaymentRequest.getCurrency(),
         postPaymentRequest.getAmount(),
         postPaymentRequest.getCvv()
@@ -77,7 +77,7 @@ public class PaymentGatewayService {
 
   private PostPaymentResponse mapPostPaymentResponse(PaymentDetail paymentDetail) {
     return new PostPaymentResponse(
-        UUID.randomUUID(),
+        paymentDetail.getId(),
         paymentDetail.getStatus(),
         trimCreditCardNumber(paymentDetail.getCardNumber(), CREDIT_CARD_MASKING_LENGTH),
         paymentDetail.getExpiryMonth(),
